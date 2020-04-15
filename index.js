@@ -491,7 +491,9 @@ class Peer extends stream.Duplex {
       this._onChannelClose()
     }
     this._channel.onerror = err => {
-      this.destroy(makeError(err, 'ERR_DATA_CHANNEL'))
+      if (this._channel.readyState !== 'closed') {
+        this.destroy(makeError(err, 'ERR_DATA_CHANNEL'))
+      }
     }
 
     // HACK: Chrome will sometimes get stuck in readyState "closing", let's check for this condition
